@@ -141,5 +141,5 @@ hr {
 }
 
 .accordion-item:not(.collapsed) .accordion-body {
-  max-height: 200px; /* Set your desired height here */
+  max-height: 200px; 
 }

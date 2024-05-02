@@ -65,6 +65,7 @@
               </p>
               <!-- Button trigger modal -->
               <button
+                id="edit_profile"
                 type="button"
                 class="btn btn-outline-secondary"
                 data-bs-toggle="modal"
@@ -158,7 +159,145 @@
                   </div>
                 </div>
               </div>
-            </div>
+
+              <div
+                class="modal fade"
+                id="editProfile"
+                data-bs-backdrop="static"
+                data-bs-keyboard="false"
+                tabindex="-1"
+                aria-labelledby="editProfileLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <form id="about_edit">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="editProfileLabel">
+                        Change Information
+                      </h1>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+                    <div class="modal-body">
+                      <!---->
+
+                      <div class="col-sm-12">
+                       
+                          <div class="form-floating mb-3 mx-2">
+                            <input
+                              id="codename"
+                              name="codename"
+                              type="text"
+                              class="form-control"
+                              placeholder="codename"
+                              
+                            />
+                            <label id="labelleft"
+                              ><i class="icon bi bi-envelope bi-lg me-1"></i
+                              >Code Name:</label
+                            >
+                          </div>
+
+                          <div class="form-floating mb-3 mx-2">
+                            <input
+                              id="firstname"
+                              name="firstname"
+                              type="text"
+                              class="form-control"
+                              placeholder="firstname"
+                             
+                            />
+                            <label id="labelleft"
+                              ><i class="icon bi bi-envelope bi-lg me-1"></i
+                              >Firstname:</label
+                            >
+                          </div>
+
+                          <div class="form-floating mb-3 mx-2">
+                            <input
+                              id="lastname"
+                              name="lastname"
+                              type="text"
+                              class="form-control"
+                              placeholder="lastname"
+                              
+                            />
+                            <label id="labelleft"
+                              ><i class="icon bi bi-envelope bi-lg me-1"></i
+                              >Lastname:</label
+                            >
+                          </div>
+
+
+                          <div class="form-floating mb-3 mx-2">
+                            <input
+                              id="student_id_no"
+                              name="student_id_no"
+                              type="text"
+                              class="form-control"
+                              placeholder="student_id_no"
+                             
+                            />
+                            <label id="labelleft"
+                              ><i class="icon bi bi-envelope bi-lg me-1"></i
+                              >Student Id Number:</label
+                            >
+                          </div>
+
+                          <div class="form-floating mb-3 mx-2">
+                            <input
+                              id="user_program"
+                              name="user_program"
+                              type="text"
+                              class="form-control"
+                              placeholder="user_program"
+                             
+                            />
+                            <label id="labelleft"
+                              ><i class="icon bi bi-envelope bi-lg me-1"></i
+                              >Program:</label
+                            >
+                          </div>
+
+                        
+                      </div>
+
+                      <!---->
+                    </div>
+                    <div class="modal-footer">
+                      <input
+                        class="form-control form-control-sm d-none"
+                        id="formFileSm"
+                        type="file"
+                      />
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        id="information_btn"
+                        type="button"
+                        class="btn btn-outline-secondary"
+                      >
+                        Save Changes
+                        <span class="icon"
+                          ><ion-icon name="save-outline"></ion-icon
+                        ></span>
+                      </button>
+                    </div>
+                  </form>
+                  </div>
+                </div>   
+              </div>
+            </div>  
           </div>
           <div
             class="accordion accordion-flush mb-3"
@@ -333,22 +472,26 @@
       <ul>
         <li class="list">
           <a href="home.html">
-            <span class="icon"><ion-icon name="home-outline" style="color: white;"></ion-icon></span>
-            <span class="text" style="color: white;">Home</span>
+            <span class="icon"
+              ><ion-icon name="home-outline" style="color: white"></ion-icon
+            ></span>
+            <span class="text" style="color: white">Home</span>
           </a>
         </li>
         <li class="list active">
           <a href="#">
             <span class="icon"
-              ><ion-icon name="person-outline" style="color: white;"></ion-icon
+              ><ion-icon name="person-outline" style="color: white"></ion-icon
             ></span>
-            <span class="text" style="color: white;">Profile</span>
+            <span class="text" style="color: white">Profile</span>
           </a>
         </li>
         <li class="list">
           <a href="menu.html">
-            <span class="icon"><ion-icon name="grid-outline" style="color: white;"></ion-icon></span>
-            <span class="text" style="color: white;">Menu</span>
+            <span class="icon"
+              ><ion-icon name="grid-outline" style="color: white"></ion-icon
+            ></span>
+            <span class="text" style="color: white">Menu</span>
           </a>
         </li>
         <div class="indicator"></div>

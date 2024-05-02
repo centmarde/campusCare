@@ -52,7 +52,7 @@ async function getDatas() {
         
         <div class="mt-2 d-flex justify-content-end">
           <!-- Button trigger modal -->
-          <button type="button" class="mx-1 btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#comment2">
+          <button id="btn_edit" type="button" class="mx-1 btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#comment2">
             Edit 
           </button>
           <button data-id="${data.id}" type="button" id="delete_btn" class="mx-1 btn btn-outline-secondary">
@@ -159,24 +159,22 @@ const deleteQuestion = async (e) => {
 
 let for_update_id = "";
 const editAction = async (e) => {
-  const id = e.target.getAttribute("data-id");
-
-  // Supabase show by id
+ 
   let { data: user_information, error } = await supabase
     .from("user_information")
     .select("*")
-    .eq("user_id", userId);
+    .eq("id", userId);
 
   if (error == null) {
-    // Store id to a variable; id will be utilize for update
-    alert("TEst");
+
     for_update_id = user_information[0].id;
 
-    // Assign values to the form
-
     document.getElementById("codename").value = user_information[0].code_name;
-
-    // Change Button Text using textContent; either innerHTML or textContent is fine here
+    document.getElementById("firstname").value = user_information[0].firstname;
+    document.getElementById("lastname").value = user_information[0].lastname;
+    document.getElementById("student_id_no").value = user_information[0].student_id_no;
+    document.getElementById("user_program").value = user_information[0].user_program;
+  
   } else {
     alert("Something wrong happened.");
     console.log(error);
@@ -192,5 +190,18 @@ document.body.addEventListener("click", function (event) {
 document.body.addEventListener("click", function (event) {
   if (event.target.id === "delete_btn") {
     deleteQuestion(event);
+  }
+});
+
+document.body.addEventListener("click", function (event) {
+  if (event.target.id === "edit_profile") {
+   editAction(event);
+  }
+});
+
+document.body.addEventListener("click", function (event) {
+  if (event.target.id === "information_btn") {
+    alert("coffee starbucks muna? hahahah")
+   /* editAction(event); */
   }
 });

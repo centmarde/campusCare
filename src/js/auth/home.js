@@ -1,13 +1,11 @@
-import {
-    supabase,
-  } from "../main";
+import { supabase } from "../main";
 
-  const itemsImageUrl =
+const itemsImageUrl =
   "https://fprynlwueelbysitqaii.supabase.co/storage/v1/object/public/profilePicture/";
   const userId = localStorage.getItem("user_id");
   console.log(userId);
 
-  getDatas();
+getDatas();
 
   async function getDatas() {
     let { data: post, error } = await supabase
@@ -152,10 +150,31 @@ async function addData() {
     
 }
 
+async function addData() {
+  const formData = new FormData(form_post);
 
+  const { data, error } = await supabase
+    .from("post")
+    .insert([
+      {
+        title: formData.get("title"),
+        body: formData.get("body"),
+        user_id: userId,
+      },
+    ])
+    .select();
+  if (error) {
+    alert("Something wrong happened. Cannot add item.");
+    console.log(error);
+  } else {
+    alert("Item Successfully Added!");
+    getDatas();
+    window.location.reload();
+  }
+}
 
-  document.body.addEventListener("click", function (event) {
-    if (event.target.id === "post_btn") {
+document.body.addEventListener("click", function (event) {
+  if (event.target.id === "post_btn") {
     addData(event);
     }
   });
