@@ -8,54 +8,61 @@ document.body.addEventListener("click", function (event) {
     }
   });
 
-form_login.onsubmit = async (e) => {
-  e.preventDefault();
+  form_login.onsubmit = async (e) => {
+    e.preventDefault();
 
-  const formData = new FormData(form_login);
-
-  let { data, error } = await supabase.auth.signInWithPassword({
-    email: formData.get("email"),
-    password: formData.get("password"),
-  });
-
-  let session = data.session;
-  let user = data.user;
-
-  console.log(user);
-
-  if (session != null) {
-   
-    localStorage.setItem("access_token", session.access_token);
-    localStorage.setItem("refresh_token", session.refresh_token);
-
-    localStorage.setItem("auth_id", user?.id);
-
-    let{data:user_information, error} = await supabase
-    .from("user_information")
-    .select("*")
-    .eq("user_id", localStorage.getItem("auth_id"));
-
-    localStorage.setItem("user_id", user_information[0].id);
-    console.log(user_information[0].id);
-
-    /* role system if implemented */
+    btn_create.innerHTML = `<div class="spinner-border text-light-sm me-2" role="status"></div><span></span>`;
+  
+    const formData = new FormData(form_login);
+  
+    let { data, error } = await supabase.auth.signInWithPassword({
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+  
+    let session = data.session;
+    let user = data.user;
+  
+    console.log(user);
+  
     if (session != null) {
-        /* const userRole = user_information[0].Role;
-        const userId = user.id; */
-        alert("Greetings!");
-        window.location.href = 'home.html';
-    }
-    else {
+     
+      localStorage.setItem("access_token", session.access_token);
+      localStorage.setItem("refresh_token", session.refresh_token);
+  
+      localStorage.setItem("auth_id", user?.id);
+  
+      let { data: userInformation, error: userInfoError } = await supabase
+        .from("user_information")
+        .select("*")
+        .eq("user_id", localStorage.getItem("auth_id"));
+  
+      localStorage.setItem("user_id", userInformation[0].id);
+      console.log(userInformation[0].id);
+  
+      /* role system if implemented */
+      let isAdmin = userInformation[0].is_admin;
+  
+      if (isAdmin === true) { 
+          alert("Welcome, Admin!");
+          window.location.href = 'admin_home.html'; 
+      } else {
+          alert("Greetings!");
+          window.location.href = 'home.html'; 
+      }
+    } else {
         alert("Error Please Try again or check your password");
         console.log(error);
     }
-  }
-  form_login.reset();
-};
-
+    btn_create.innerHTML = "Sign In";
+    form_login.reset();
+  };
+  
 
 const register = async (e) => {
     e.preventDefault();
+    btn_create.innerHTML = `<div class="spinner-border text-light-sm me-2" role="status"></div><span></span>`;
+
    
     const formData = new FormData(form_register);
     const password = formData.get("password_reg");
@@ -106,6 +113,7 @@ const register = async (e) => {
         errorNotification("Password not match", 10);
         document.querySelector("#form_register button").disabled = false;
         document.querySelector("#form_register button").innerHTML = "Register";
+        btn_create.innerHTML = "Create Account";
     }
 }
 

@@ -328,3 +328,47 @@ async function addData() {
     alert("Something went wrong. Please try again later.");
   }
 }
+
+function editAnnouncement(announcementId, newTitle, newBody) {
+  // Update the announcement in the 'notice' table
+  supabase
+      .from('notice')
+      .update({ announcement: newBody, announcement_title: newTitle })
+      .eq('id', announcementId)
+      .then((response) => {
+          console.log('Announcement updated successfully:', response);
+          // You may want to close the modal or update the UI here
+           // Update the announcement in the accordion
+           document.getElementById('announcementTitle1').innerText = newTitle;
+           document.getElementById('announcementBody1').innerText = newBody;
+
+
+           // Close the modal
+           const modal = document.getElementById('editAnnouncementModal');
+           const modalBackdrop = document.querySelector('.modal-backdrop');
+           modal.classList.remove('show');
+           modalBackdrop.remove();
+      })
+      .catch((error) => {
+          console.error('Error updating announcement:', error.message);
+      });
+}
+
+// Example usage: Assuming you have a button to trigger the edit modal
+document.querySelector('.edit-announcement').addEventListener('click', function() {
+  const announcementId = this.getAttribute('data-announcement-id');
+  const currentTitle = document.getElementById('announcementTitle1').innerText;
+  const currentBody = document.getElementById('announcementBody1').innerText;
+
+  // Populate the modal with the current announcement data
+  document.getElementById('newTitle').value = currentTitle;
+  document.getElementById('newBody').value = currentBody;
+
+  // When the user clicks "Save changes", update the announcement
+  document.getElementById('saveChangesBtn').addEventListener('click', function() {
+      const newTitle = document.getElementById('newTitle').value;
+      const newBody = document.getElementById('newBody').value;
+
+      editAnnouncement(announcementId, newTitle, newBody);
+  });
+});

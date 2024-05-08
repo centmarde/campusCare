@@ -15,7 +15,7 @@
     <meta name="theme-color" content="#31d53d" />
     <link rel="stylesheet" href="./css/home.css" />
     <script type="module" src="./js/main.js"></script>
-    <script type="module" src="./js/auth/profile.js"></script>
+    <script type="module" src="./js/auth/admin_profile.js"></script>
   </head>
   <body class="background-radial-gradient">
     <div id="preloader"></div>
@@ -328,6 +328,15 @@
                   <h2 id="announcementTitle1">title</h2>
                   <p id="announcementBody1">body</p>
                   <!-- Button trigger modal -->
+                  <button
+                    type="button"
+                    class="btn btn-outline-dark edit-announcement"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editAnnouncementModal"
+                    data-announcement-id="1"
+                  >
+                    Edit
+                  </button>
                 </div>
               </div>
             </div>
@@ -340,7 +349,59 @@
             tabindex="-1"
             aria-labelledby="editAnnouncementModalLabel"
             aria-hidden="true"
-          ></div>
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editAnnouncementModalLabel">
+                    Edit Announcement
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label for="newTitle" class="form-label">New Title</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="newTitle"
+                      placeholder="Enter new title"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="newBody" class="form-label">New Body</label>
+                    <textarea
+                      class="form-control"
+                      id="newBody"
+                      rows="3"
+                      placeholder="Enter new body"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    id="saveChangesBtn"
+                  >
+                    Save changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </aside>
         <!-- Modal for editing announcement -->
         <section class="col-12 col-sm-7 col-md-8">
