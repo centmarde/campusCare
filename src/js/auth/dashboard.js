@@ -12,7 +12,7 @@ const imageUrl = itemsImageUrl + imagePostPath;
 console.log(imageUrl);
 getDatas();
 
-async function getDatas() {
+async function getDatas(searchTerm = "") {
   let { data: user_information, error: userError } = await supabase
     .from("user_information")
     .select("*, user_program, code_name")
@@ -45,6 +45,10 @@ async function getDatas() {
     document.getElementById("profilePicture").src =
       itemsImageUrl + user_information[0].image_path;
   });
+
+  if (searchTerm) {
+    post = post.filter(p => p.title.toLowerCase().includes(searchTerm.toLowerCase()));
+  }
 
   post.forEach((data) => {
     const imagepath = data.user_information.image_path;
@@ -144,6 +148,11 @@ async function getDatas() {
   });
   document.getElementById("container").innerHTML = container;
 }
+
+document.getElementById("searchInput").addEventListener("input", function () {
+  const searchTerm = this.value.trim();
+  getDatas(searchTerm);
+});
 
 async function addData() {
   const formData = new FormData(form_post);

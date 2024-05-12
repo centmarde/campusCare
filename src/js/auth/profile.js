@@ -47,7 +47,7 @@ document.body.addEventListener("click", function (event) {
   }
 });
 
-async function getDatas() {
+async function getDatas(searchTerm = "") {
   try {
     // Fetch user information
     let { data: user_information, error: userError } = await supabase
@@ -101,6 +101,12 @@ async function getDatas() {
       document.getElementById("announcementBody1").innerText =
         data.announcement;
     });
+
+    if (searchTerm) {
+      post = post.filter((p) =>
+        p.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
 
     // Update UI with posts
     post.forEach((data) => {
@@ -160,6 +166,11 @@ async function getDatas() {
     alert("Something went wrong. Please try again later.");
   }
 }
+
+document.getElementById("searchInput").addEventListener("input", function () {
+  const searchTerm = this.value.trim();
+  getDatas(searchTerm);
+});
 
 const deletePost = async (e) => {
   const id = e.target.getAttribute("data-id");
