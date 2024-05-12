@@ -41,17 +41,20 @@ document.body.addEventListener("click", function (event) {
       console.log(userInformation[0].id);
   
       /* role system if implemented */
-      let isAdmin = userInformation[0].is_admin;
+      const userRole = userInformation[0].role;
+   
+      console.log(userRole);
+      localStorage.setItem("role", userRole);
   
-      if (isAdmin === true) { 
+      if (userRole === "admin") { 
           alert("Welcome, Admin!");
-          window.location.href = 'admin_home.html'; 
+          window.location.href = './dashboard.html'; 
       } else {
           alert("Greetings!");
-          window.location.href = 'home.html'; 
+           window.location.href = './home.html'; 
       }
     } else {
-        alert("Error Please Try again or check your password");
+        alert(`error: ${error.message}`);
         console.log(error);
     }
     btn_create.innerHTML = "Sign In";

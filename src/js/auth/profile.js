@@ -1,9 +1,16 @@
-import { doLogout, supabase } from "../main";
+import { supabase } from "../main";
 import * as bootstrap from "bootstrap";
 
 const itemsImageUrl =
   "https://fprynlwueelbysitqaii.supabase.co/storage/v1/object/public/profilePicture/";
 const userId = localStorage.getItem("user_id");
+console.log(userId);
+const postImageUrl =
+  "https://fprynlwueelbysitqaii.supabase.co/storage/v1/object/public/postPicture/";
+const imagePostPath = "./postPicture/";
+const imageUrl = itemsImageUrl + imagePostPath;
+console.log(imageUrl);
+getDatas();
 sessionStorage.setItem("user_program", "user_program");
 sessionStorage.setItem("code_name", "code_name");
 
@@ -49,7 +56,7 @@ async function getDatas() {
       .eq("id", userId);
     let { data: post, error: postError } = await supabase
       .from("post")
-      .select("*")
+      .select("*,user_information(*)")
       .eq("user_id", userId);
 
     // Fetch announcement
@@ -89,14 +96,24 @@ async function getDatas() {
 
     // Update UI with announcements
     announcements.forEach((data) => {
-      document.getElementById('announcementTitle1').innerText = data.announcement_title;
-      document.getElementById('announcementBody1').innerText = data.announcement;
+      document.getElementById("announcementTitle1").innerText =
+        data.announcement_title;
+      document.getElementById("announcementBody1").innerText =
+        data.announcement;
     });
 
     // Update UI with posts
     post.forEach((data) => {
+      const imagepost = data.image_post;
+      let postImage = "";
+      if (imagepost) {
+        postImage = `<img src="${
+          postImageUrl + imagepost
+        }" style="width: 400px; height: 200px" />`;
+      }
       let deleteButton = `<button type="button" class="btn btn-outline-light" id="delete_btn" data-id="${data.id}">Delete</button>`;
-      container += `<div class="m-3 p-3 card" style="border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: black" >
+      container += `
+      <div class="m-3 p-3" style="border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: black" >
         <div class="card d-flex align-items-center flex-row w-100" style="border-radius: 10px; background: rgba(255, 255, 255, 0.5);" data-id="${
           data.image_path
         }">
@@ -116,11 +133,8 @@ async function getDatas() {
             ${data.body}
           </p>
           <div class="row d-flex justify-content-center">
-            <img
-              src="assets/awdwa.jpg"
-              style="width: 400px; height: 200px"
-            />
-          </div>
+                    ${postImage}
+                </div>
           <div class="mt-2">
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#comment1">
@@ -146,7 +160,6 @@ async function getDatas() {
     alert("Something went wrong. Please try again later.");
   }
 }
-
 
 const deletePost = async (e) => {
   const id = e.target.getAttribute("data-id");
@@ -299,32 +312,57 @@ async function editProfile(event) {
 
 async function addData() {
   const formData = new FormData(form_post);
+  const fileInput = document.getElementById("uploadPhotoBtn");
+  const file = fileInput.files[0];
+  let imagePath = ""; // Define imagePath variable
 
-  try {
-    const { error } = await supabase
-      .from("post")
-      .insert([
-        {
-          title: formData.get("title"),
-          body: formData.get("body"),
-          user_id: userId,
-        },
-      ])
-      .select();
+  if (file) {
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("postPicture")
+      .upload("postPicture/" + file.name, file);
 
-    if (error) {
-      throw error;
+    if (uploadError) {
+      alert("Error uploading post picture.");
+      console.error("Upload error:", uploadError.message);
+      return;
     }
 
-    alert("Post Successfully Added!");
-    getDatas();
+    // Get the file path after uploading
+    imagePath = "postPicture/" + file.name;
 
-    // Close the modal
-    const modal = document.getElementById("post1");
-    const modalInstance = bootstrap.Modal.getInstance(modal);
-    modalInstance.hide();
-  } catch (error) {
-    console.error("Error adding Post:", error);
-    alert("Something went wrong. Please try again later.");
+    // Update the 'post' table with the image data
+    const { data: updateData, updateError } = await supabase
+      .from("post")
+      .update({ image_post: imagePath })
+      .eq("id", userId);
+
+    if (updateError) {
+      alert("Error updating post with image data.");
+      console.error("Update error:", updateError.message);
+      return;
+    }
   }
+
+  // Insert the post data with the image path
+  const { data: postData, insertError } = await supabase
+    .from("post")
+    .insert([
+      {
+        title: formData.get("title"),
+        body: formData.get("body"),
+        image_post: imagePath, // Use the image path here
+        user_id: userId,
+      },
+    ])
+    .select();
+
+  if (insertError) {
+    alert("Error adding post.");
+    console.error("Insert error:", insertError.message);
+    return;
+  }
+
+  alert("Post Successfully Added!");
+  getDatas();
+  window.location.reload();
 }

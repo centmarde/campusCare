@@ -14,6 +14,10 @@
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#31d53d" />
     <link rel="stylesheet" href="./css/home.css" />
+    <script
+      src="https://kit.fontawesome.com/ae360af17e.js"
+      crossorigin="anonymous"
+    ></script>
     <script type="module" src="./js/main.js"></script>
     <script type="module" src="./js/auth/profile.js"></script>
   </head>
@@ -86,11 +90,8 @@
                 data-bs-toggle="modal"
                 data-bs-target="#editPicture"
               >
-                <span class="ms-2">Change Profile</span>
-                <ion-icon
-                  name="person-circle-outline"
-                  style="padding-top: 3px"
-                ></ion-icon>
+                <span class="ms-2">Profile Photo</span>
+                
               </button>
 
               <!-- Modal -->
@@ -158,9 +159,7 @@
                         class="btn btn-outline-secondary"
                       >
                         Save Changes
-                        <span class="icon"
-                          ><ion-icon name="save-outline"></ion-icon
-                        ></span>
+                        
                       </button>
                     </div>
                   </div>
@@ -332,17 +331,7 @@
               </div>
             </div>
           </div>
-
-          <!-- Modal for editing announcement -->
-          <div
-            class="modal fade"
-            id="editAnnouncementModal"
-            tabindex="-1"
-            aria-labelledby="editAnnouncementModalLabel"
-            aria-hidden="true"
-          ></div>
         </aside>
-        <!-- Modal for editing announcement -->
         <section class="col-12 col-sm-7 col-md-8">
           <div class="mb-3">
             <div
@@ -478,7 +467,7 @@
     <div class="navigation fixed-bottom" style="background: rgba(0, 0, 0, 0.5)">
       <ul>
         <li class="list">
-          <a href="admin_home.html">
+          <a href="./home.html">
             <span class="icon"
               ><ion-icon name="home-outline" style="color: white"></ion-icon
             ></span>
@@ -494,7 +483,7 @@
           </a>
         </li>
         <li class="list">
-          <a href="admin_menu.html">
+          <a href="./menu.html">
             <span class="icon"
               ><ion-icon name="grid-outline" style="color: white"></ion-icon
             ></span>

@@ -1,0 +1,185 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+.background-radial-gradient {
+  background-image: url("../assets/home-csu.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.875rem;
+  opacity: 1;
+  overflow-y: scroll;
+  margin: 0;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+}
+
+li {
+  list-style: none;
+}
+
+h4 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.275rem;
+  color: var(--bs-emphasis-color);
+}
+
+/* Layout for admin dashboard skeleton */
+
+.wrapper {
+  align-items: stretch;
+  display: flex;
+  width: 100%;
+}
+
+#sidebar {
+  max-width: 264px;
+  min-width: 264px;
+  background: var(--bs-dark);
+  transition: all 0.35s ease-in-out;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 0;
+  overflow: hidden;
+  transition: all 0.35s ease-in-out;
+  width: 100%;
+  background: var(--bs-dark-bg-subtle);
+}
+
+/* Sidebar Elements Style */
+
+.sidebar-logo {
+  padding: 1.15rem;
+}
+
+.sidebar-logo a {
+  color: #e9ecef;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.sidebar-nav {
+  flex-grow: 1;
+  list-style: none;
+  margin-bottom: 0;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.sidebar-header {
+  color: #e9ecef;
+  font-size: 0.75rem;
+  padding: 1.5rem 1.5rem 0.375rem;
+}
+
+a.sidebar-link {
+  padding: 0.625rem 1.625rem;
+  color: #e9ecef;
+  position: relative;
+  display: block;
+  font-size: 0.875rem;
+}
+
+.sidebar-link[data-bs-toggle="collapse"]::after {
+  border: solid;
+  border-width: 0 0.075rem 0.075rem 0;
+  content: "";
+  display: inline-block;
+  padding: 2px;
+  position: absolute;
+  right: 1.5rem;
+  top: 1.4rem;
+  transform: rotate(-135deg);
+  transition: all 0.2s ease-out;
+}
+
+.sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+  transform: rotate(45deg);
+  transition: all 0.2s ease-out;
+}
+
+.avatar {
+  height: 40px;
+  width: 40px;
+}
+
+.navbar-expand .navbar-nav {
+  margin-left: auto;
+}
+
+.content {
+  flex: 1;
+  max-width: 100vw;
+  width: 100vw;
+}
+
+@media (min-width: 768px) {
+  .content {
+    max-width: auto;
+    width: auto;
+  }
+}
+
+.card {
+  box-shadow: 0 0 0.875rem 0 rgba(34, 46, 60, 0.05);
+  margin-bottom: 24px;
+}
+
+.illustration {
+  background-color: var(--bs-primary-bg-subtle);
+  color: var(--bs-emphasis-color);
+}
+
+.illustration-img {
+  max-width: 150px;
+  width: 100%;
+}
+
+/* Sidebar Toggle */
+
+#sidebar.collapsed {
+  margin-left: -264px;
+}
+
+/* Footer and Nav */
+
+@media (max-width: 767.98px) {
+  .js-sidebar {
+    margin-left: -264px;
+  }
+
+  #sidebar.collapsed {
+    margin-left: 0;
+  }
+
+  .navbar,
+  footer {
+    width: 100vw;
+  }
+}
+
+#preloader {
+  background: #222327 url("../assets/imgs/preloader2.gif") no-repeat center
+    center;
+  height: 100vh;
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+}
