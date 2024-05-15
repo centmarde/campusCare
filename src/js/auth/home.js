@@ -1,15 +1,23 @@
 import { supabase } from "../main";
 
-const itemsImageUrl =
-  "https://fprynlwueelbysitqaii.supabase.co/storage/v1/object/public/profilePicture/";
+const itemsImageUrl = "https://fprynlwueelbysitqaii.supabase.co/storage/v1/object/public/profilePicture/";
 const userId = localStorage.getItem("user_id");
-console.log(userId);
-const postImageUrl =
-  "https://fprynlwueelbysitqaii.supabase.co/storage/v1/object/public/postPicture/";
+const postImageUrl = "https://fprynlwueelbysitqaii.supabase.co/storage/v1/object/public/postPicture/";
 const imagePostPath = "./postPicture/";
 const imageUrl = itemsImageUrl + imagePostPath;
+console.log(userId);
 console.log(imageUrl);
 getDatas();
+
+document.body.addEventListener("click", function (event) {
+  if (event.target.id === "saveImage") {
+    saveImage(event);
+  } else if (event.target.id === "delete_btn") {
+    deletePost(event);
+  } else if (event.target.id === "information_btn") {
+    editProfile(event);
+  }
+});
 
 async function getDatas(searchTerm = "") {
   let { data: user_information, error: userError } = await supabase
@@ -21,108 +29,67 @@ async function getDatas(searchTerm = "") {
     .from("post")
     .select("*,user_information(*)");
 
-  let { data: announcements, error: announcementError } = await supabase
-    .from("notice")
-    .select("*");
-
   post.sort(() => Math.random() - 0.5);
   let container = "";
 
   if (searchTerm) {
-    post = post.filter(p => p.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    post = post.filter((p) =>
+      p.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   }
+
+  post.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   post.forEach((data) => {
     const imagepath = data.user_information.image_path;
     const codename = data.user_information.code_name;
     const imagepost = data.image_post;
+    const postId = data.id; // Unique post ID
     let postImage = "";
     if (imagepost) {
-      postImage = `<img src="${
-        postImageUrl + imagepost
-      }" style="width: 400px; height: 200px" />`;
+      postImage = `<img src="${postImageUrl + imagepost}" style="width: 400px; height: 200px" />`;
     }
     let deleteButton = "";
     if (userId == data.user_information.id) {
-      deleteButton = `<button data-id="${data.id}" id="delete_btn" type="button" class="btn btn-outline-light">Delete</button>`;
+      deleteButton = `<button data-id="${postId}" id="delete_btn" type="button" class="btn btn-outline-light">Delete</button>`;
     }
 
     container += `
-        <div class="m-3 p-3" style="border-radius: 10px; background: rgba(0, 0, 0, 0.5);" data-id="${
-          data.id
-        }">
-            <div class="card d-flex align-items-center flex-row w-100" style="border-radius: 10px; background: rgba(255, 255, 255, 0.5);">
-                <img src="${
-                  itemsImageUrl + imagepath
-                }" class="block mx-2 my-2 border border-black border-2 rounded-circle me-2" style="border-radius: 50%; width: 50px; height: 50px" alt="" />
-                <h5 class="card-title px-1">${data.title}</h5>
-                <div class="row"></div>
-            </div>
-            <div class="card-body">
-                <p class="text-light card-text d-grid mt-3 ">
-                    <cite class="text-light card-subtitle mb-2" >
-                        By: ${codename}
-                    </cite>
-                    ${data.body}
-                </p>
-                <div class="row d-flex justify-content-center">
-                    ${postImage}
-                </div>
-                <div class="mt-2">
+      <div class="m-3 p-3" style="border-radius: 10px; background: rgba(0, 0, 0, 0.5);" data-id="${postId}">
+        <div class="card d-flex align-items-center flex-row w-100" style="border-radius: 10px; background: rgba(255, 255, 255, 0.5);">
+          <img src="${itemsImageUrl + imagepath}" class="block mx-2 my-2 border border-black border-2 rounded-circle me-2" style="border-radius: 50%; width: 50px; height: 50px" alt="" />
+          <h5 class="card-title px-1">${data.title}</h5>
+          <div class="row"></div>
+        </div>
+        <div class="card-body">
+          <p class="text-light card-text d-grid mt-3">
+            <cite class="text-light card-subtitle mb-2">By: ${codename}</cite>
+            ${data.body}
+          </p>
+          <div class="row d-flex justify-content-center">
+            ${postImage}
+          </div>
+          <div class="mt-2">
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#comment1">
+            <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#comments${postId}">
               Comment
             </button>
             ${deleteButton}
             <!-- Modal -->
-            <div class="modal fade" id="comment1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="commentLabel1" aria-hidden="true">
+            <div class="modal fade" id="comments${postId}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="commentLabel${postId}" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="commentLabel1">Comments</h1>
+                    <h1 class="modal-title fs-5" id="commentLabel${postId}">Comments</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <div class="card card-body">
-                      <p class="card-text ">
-                        <img
-                          src="assets/face.jpg"
-                          class="card-img-top"
-                          style="border-radius: 50%; width: 20px; height: 20px"
-                          alt=""
-                        />
-                        <h6 class="card-subtitle text-body-secondary" style="overflow-y: auto">
-                          By Admin
-                        </h6>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et 
-                      </p>
-                    </div>
-                    <div class="card card-body">
-                      <p class="card-text ">
-                        <img
-                          src="assets/face.jpg"
-                          class="card-img-top"
-                          style="border-radius: 50%; width: 20px; height: 20px"
-                          alt=""
-                        />
-                        <h6 class="card-subtitle text-body-secondary" style="overflow-y: auto">
-                          By Admin
-                        </h6>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                      </p>
-                    </div>
+                    <div id="comments-container-${postId}"></div>
                   </div>
-                  <div class="modal-footer"> 
-                    <input
-                            type="text"
-                            name="text"
-                            value=""
-                            class="w-100 p-3"
-                            placeholder="Write a comment..."
-                            style="height: 50px; border: 2px solid #ccc; border-radius: 10px;"
-                          />
+                  <div class="modal-footer">
+                    <input type="text" id="comment-input-${postId}" class="w-100 p-3" placeholder="Write a comment..." style="height: 50px; border: 2px solid #ccc; border-radius: 10px;" />
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-outline-secondary">Add Comment</button>
+                    <button type="button" class="btn btn-outline-secondary" id="add-comment-btn-${postId}">Add Comment</button>
                   </div>
                 </div>
               </div>
@@ -133,6 +100,9 @@ async function getDatas(searchTerm = "") {
     `;
   });
   document.getElementById("container").innerHTML = container;
+
+  // Attach event listeners for comment functionality
+  attachEventListeners();
 }
 
 document.getElementById("searchInput").addEventListener("input", function () {
@@ -201,15 +171,16 @@ if (post_btn) {
   };
 }
 
-async function deletePost(event, id) {
+async function deletePost(event) {
   const isConfirmed = window.confirm("Are you sure you want to delete Post?");
+  const postId = event.target.getAttribute('data-id');
 
   if (!isConfirmed) {
     return;
   }
 
   try {
-    const { error } = await supabase.from("post").delete().eq("id", id);
+    const { error } = await supabase.from("post").delete().eq("id", postId);
     if (error) {
       throw error;
     }
@@ -220,4 +191,80 @@ async function deletePost(event, id) {
     console.error(error);
     window.location.reload();
   }
+}
+
+// Function to fetch comments
+async function fetchComments(post_id, user_id) {
+  if (!post_id || !user_id) {
+    console.error("post_id or user_id is not defined");
+    return;
+  }
+
+  const { data: comments, error } = await supabase
+    .from("comments")
+    .select("*, user_information(*)")
+    .eq("post_id", post_id)
+    .eq("user_id", user_id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const commentsContainer = document.getElementById(`comments-container-${post_id}`);
+  commentsContainer.innerHTML = "";
+
+  comments.forEach((comment) => {
+    const userImage = itemsImageUrl + comment.user_information.image_path;
+    const username = comment.user_information.code_name;
+
+    const commentCard = document.createElement("div");
+    commentCard.className = "card card-body";
+    commentCard.innerHTML = `
+      <p class="card-text">
+        <img src="${userImage}" class="card-img-top" style="border-radius: 50%; width: 20px; height: 20px" alt=""/>
+        <h6 class="card-subtitle text-body-secondary" style="overflow-y: auto">By ${username}</h6>
+        ${comment.comment}
+      </p>
+    `;
+    commentsContainer.appendChild(commentCard);
+  });
+}
+
+// Function to add comment
+async function addComment(post_id, user_id) {
+  const commentInput = document.getElementById(`comment-input-${post_id}`);
+  const commentText = commentInput.value;
+
+  if (!commentText) return;
+
+  const { error } = await supabase
+    .from("comments")
+    .insert([{ comment: commentText, post_id, user_id }]);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  // Fetch and display comments again
+  fetchComments(post_id, user_id);
+  commentInput.value = ""; // Clear input field
+}
+
+// Attach event listeners to dynamically added elements
+function attachEventListeners() {
+  document.querySelectorAll("[id^=comments]").forEach((modal) => {
+    const postId = modal.id.replace("comments", "");
+    modal.addEventListener("show.bs.modal", () => {
+      fetchComments(postId, userId);
+    });
+  });
+
+  document.querySelectorAll("[id^=add-comment-btn]").forEach((button) => {
+    const postId = button.id.replace("add-comment-btn-", "");
+    button.addEventListener("click", () => {
+      addComment(postId, userId);
+    });
+  });
 }

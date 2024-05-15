@@ -12,6 +12,16 @@ const imageUrl = itemsImageUrl + imagePostPath;
 console.log(imageUrl);
 getDatas();
 
+document.body.addEventListener("click", function (event) {
+  if (event.target.id === "saveImage") {
+    saveImage(event);
+  } else if (event.target.id === "information_btn") {
+    editProfile(event);
+  } else if (event.target.id === "delete_comment") {
+    deleteComment(event);
+  }
+});
+
 async function getDatas(searchTerm = "") {
   let { data: user_information, error: userError } = await supabase
     .from("user_information")
@@ -47,8 +57,12 @@ async function getDatas(searchTerm = "") {
   });
 
   if (searchTerm) {
-    post = post.filter(p => p.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    post = post.filter((p) =>
+      p.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   }
+
+  post.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   post.forEach((data) => {
     const imagepath = data.user_information.image_path;
@@ -97,46 +111,16 @@ async function getDatas(searchTerm = "") {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <div class="card card-body">
-                      <p class="card-text ">
-                        <img
-                          src="${postImage}"
-                          class="card-img-top"
-                          style="border-radius: 50%; width: 20px; height: 20px"
-                          alt=""
-                        />
-                        <h6 class="card-subtitle text-body-secondary" style="overflow-y: auto">
-                          By Admin
-                        </h6>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et 
-                      </p>
-                    </div>
-                    <div class="card card-body">
-                      <p class="card-text ">
-                        <img
-                          src="assets/face.jpg"
-                          class="card-img-top"
-                          style="border-radius: 50%; width: 20px; height: 20px"
-                          alt=""
-                        />
-                        <h6 class="card-subtitle text-body-secondary" style="overflow-y: auto">
-                          By Admin
-                        </h6>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                      </p>
-                    </div>
+                    <div id="comments-container-${data.id}"></div>
                   </div>
-                  <div class="modal-footer"> 
-                    <input
-                            type="text"
-                            name="text"
-                            value=""
-                            class="w-100 p-3"
-                            placeholder="Write a comment..."
-                            style="height: 50px; border: 2px solid #ccc; border-radius: 10px;"
-                          />
+                  <div class="modal-footer">
+                    <input type="text" id="comment-input-${
+                      data.id
+                    }" class="w-100 p-3" placeholder="Write a comment..." style="height: 50px; border: 2px solid #ccc; border-radius: 10px;" />
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-outline-secondary">Add Comment</button>
+                    <button type="button" class="btn btn-outline-secondary" id="add-comment-btn-${
+                      data.id
+                    }">Add Comment</button>
                   </div>
                 </div>
               </div>
@@ -147,6 +131,9 @@ async function getDatas(searchTerm = "") {
     `;
   });
   document.getElementById("container").innerHTML = container;
+
+  // Attach event listeners for comment functionality
+  attachEventListeners();
 }
 
 document.getElementById("searchInput").addEventListener("input", function () {
@@ -260,6 +247,13 @@ async function deletePost(event, id) {
   }
 }
 
+document.body.addEventListener("click", function (event) {
+  if (event.target.id === "delete_btn") {
+    const postId = event.target.dataset.id;
+    deletePost(event, postId); // Pass event and postId to deletePost function
+  }
+});
+
 const sidebarToggle = document.querySelector("#sidebar-toggle");
 sidebarToggle.addEventListener("click", function () {
   document.querySelector("#sidebar").classList.toggle("collapsed");
@@ -298,7 +292,7 @@ document
       document.getElementById("announcementTitle1").innerText;
     const currentBody = document.getElementById("announcementBody1").innerText;
 
-    // Populate the modal with the current announcement data
+    // Populate the modal with the currentannouncement data
     document.getElementById("newTitle").value = currentTitle;
     document.getElementById("newBody").value = currentBody;
 
@@ -353,3 +347,78 @@ async function countRows() {
 }
 
 countRows();
+
+async function fetchComments(post_id, user_id) {
+  if (!post_id || !user_id) {
+    console.error("post_id or user_id is not defined");
+    return;
+  }
+
+  const { data: comments, error } = await supabase
+    .from("comments")
+    .select("*, user_information(*)")
+    .eq("post_id", post_id)
+    .eq("user_id", user_id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const commentsContainer = document.getElementById(`comments-container-${post_id}`);
+  commentsContainer.innerHTML = "";
+
+  comments.forEach((comment) => {
+    const userImage = itemsImageUrl + comment.user_information.image_path;
+    const username = comment.user_information.code_name;
+
+    const commentCard = document.createElement("div");
+    commentCard.className = "card card-body";
+    commentCard.innerHTML = `
+      <p class="card-text">
+        <img src="${userImage}" class="card-img-top" style="border-radius: 50%; width: 20px; height: 20px" alt=""/>
+        <h6 class="card-subtitle text-body-secondary" style="overflow-y: auto">By ${username}</h6>
+        ${comment.comment}
+      </p>
+    `;
+    commentsContainer.appendChild(commentCard);
+  });
+}
+
+// Function to add comment
+async function addComment(post_id, user_id) {
+  const commentInput = document.getElementById(`comment-input-${post_id}`);
+  const commentText = commentInput.value;
+
+  if (!commentText) return;
+
+  const { error } = await supabase
+    .from("comments")
+    .insert([{ comment: commentText, post_id, user_id }]);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  // Fetch and display comments again
+  fetchComments(post_id, user_id);
+  commentInput.value = ""; // Clear input field
+}
+
+// Attach event listeners to dynamically added elements
+function attachEventListeners() {
+  document.querySelectorAll("[id^=comments]").forEach((modal) => {
+    const postId = modal.id.replace("comments", "");
+    modal.addEventListener("show.bs.modal", () => {
+      fetchComments(postId, userId);
+    });
+  });
+
+  document.querySelectorAll("[id^=add-comment-btn]").forEach((button) => {
+    const postId = button.id.replace("add-comment-btn-", "");
+    button.addEventListener("click", () => {
+      addComment(postId, userId);
+    });
+  });
+}
